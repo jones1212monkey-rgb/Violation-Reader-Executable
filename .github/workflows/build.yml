@@ -1,3 +1,4 @@
+
 name: Build C++ Test
 
 on:
@@ -19,13 +20,20 @@ jobs:
           }
           '@ | Set-Content test.cpp
 
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
       - name: Compile
         shell: pwsh
         run: |
           cl /EHsc /O2 test.cpp /Fe:TestProgram.exe
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Upload EXE
         uses: actions/upload-artifact@v4
         with:
           name: TestProgram
           path: TestProgram.exe
+
